@@ -1,0 +1,85 @@
+{
+  "duracao": 53.938,
+  "cenas": [
+    {
+      "id": "intro",
+      "texto": "A música eletrônica de pista tem uma árvore genealógica. Vamos subir por ela, galho por galho.",
+      "bpm": 118,
+      "padrao": "four",
+      "falaInicio": 0.6,
+      "falaFim": 8.336,
+      "inicio": 0,
+      "fim": 8.436
+    },
+    {
+      "id": "disco",
+      "texto": "A raiz é a disco, nos anos setenta: o bumbo marca todos os tempos. É o famoso quatro por quatro.",
+      "bpm": 118,
+      "padrao": "four",
+      "falaInicio": 8.686,
+      "falaFim": 15.302,
+      "inicio": 8.436,
+      "fim": 15.402
+    },
+    {
+      "id": "house",
+      "texto": "Em Chicago, nos anos oitenta, DJs recriam esse groove com máquinas. Nasce o house, a cento e vinte e quatro BPM.",
+      "bpm": 124,
+      "padrao": "four",
+      "falaInicio": 15.652,
+      "falaFim": 24.268,
+      "inicio": 15.402,
+      "fim": 24.368
+    },
+    {
+      "id": "techno",
+      "texto": "Em Detroit, o house fica frio e mecânico. É o techno: cru e hipnótico.",
+      "bpm": 130,
+      "padrao": "four",
+      "falaInicio": 24.618,
+      "falaFim": 30.05,
+      "inicio": 24.368,
+      "fim": 30.15
+    },
+    {
+      "id": "trance",
+      "texto": "Na Alemanha, o techno ganha melodias épicas. Surge o trance.",
+      "bpm": 138,
+      "padrao": "four",
+      "falaInicio": 30.4,
+      "falaFim": 35.608,
+      "inicio": 30.15,
+      "fim": 35.708
+    },
+    {
+      "id": "dnb",
+      "texto": "No Reino Unido, os breakbeats aceleram até cento e setenta e quatro BPM. É o drum and bass.",
+      "bpm": 174,
+      "padrao": "break",
+      "falaInicio": 35.958,
+      "falaFim": 41.534,
+      "inicio": 35.708,
+      "fim": 41.634
+    },
+    {
+      "id": "dubstep",
+      "texto": "Do UK garage nasce o dubstep: meio tempo e graves pesados.",
+      "bpm": 140,
+      "padrao": "half",
+      "falaInicio": 41.884,
+      "falaFim": 45.74,
+      "inicio": 41.634,
+      "fim": 45.84
+    },
+    {
+      "id": "outro",
+      "texto": "Cada gênero é um galho da mesma raiz. Conhecer a árvore ajuda o DJ a montar sets com história.",
+      "bpm": 124,
+      "padrao": "four",
+      "falaInicio": 46.09,
+      "falaFim": 52.338,
+      "inicio": 45.84,
+      "fim": 53.938
+    }
+  ]
+}
