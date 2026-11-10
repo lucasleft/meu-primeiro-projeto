@@ -1,13 +1,15 @@
-"""Gera a narração (Piper TTS), a trilha de batidas e o arquivo de tempos das cenas.
+"""Gera a narração (Kokoro TTS, voz pt-BR), a trilha de batidas e o arquivo de tempos das cenas.
+
+Requer: pip install kokoro-onnx soundfile numpy
+Modelo: kokoro-v1.0.onnx e voices-v1.0.bin (releases de thewh1teagle/kokoro-onnx no GitHub)
 
 Uso:
-  python3 scripts/gerar_audio.py --piper <caminho/do/piper> --voz <modelo.onnx>
+  python3 scripts/gerar_audio.py --modelo kokoro-v1.0.onnx --vozes voices-v1.0.bin [--voz pm_alex]
+Vozes pt-BR: pm_alex, pm_santa (masculinas), pf_dora (feminina).
 """
 
 import argparse
 import json
-import subprocess
-import tempfile
 import wave
 from pathlib import Path
 
@@ -23,12 +25,20 @@ CENAS = [
     ("intro", "A música eletrônica de pista tem uma árvore genealógica. Vamos subir por ela, galho por galho.", 118, "four"),
     ("disco", "A raiz é a disco, nos anos setenta: o bumbo marca todos os tempos. É o famoso quatro por quatro.", 118, "four"),
     ("house", "Em Chicago, nos anos oitenta, DJs recriam esse groove com máquinas. Nasce o house, a cento e vinte e quatro BPM.", 124, "four"),
-    ("techno", "Em Detroit, o house fica frio e mecânico. É o techno: cru e hipnótico.", 130, "four"),
-    ("trance", "Na Alemanha, o techno ganha melodias épicas. Surge o trance.", 138, "four"),
+    ("techno", "Em Detroit, o house fica frio e mecânico. É o techno: cru, repetitivo e hipnótico.", 130, "four"),
+    ("trance", "Na Alemanha dos anos noventa, o techno ganha melodias longas e épicas. Surge o trance.", 138, "four"),
     ("dnb", "No Reino Unido, os breakbeats aceleram até cento e setenta e quatro BPM. É o drum and bass.", 174, "break"),
-    ("dubstep", "Do UK garage nasce o dubstep: meio tempo e graves pesados.", 140, "half"),
+    ("dubstep", "Do UK garage, primo do house, nasce o dubstep: meio tempo e graves pesados.", 140, "half"),
     ("outro", "Cada gênero é um galho da mesma raiz. Conhecer a árvore ajuda o DJ a montar sets com história.", 124, "four"),
 ]
+
+
+def reamostrar(dados: np.ndarray, sr: int) -> np.ndarray:
+    if sr == SR:
+        return dados
+    t_orig = np.arange(len(dados)) / sr
+    t_novo = np.arange(int(len(dados) * SR / sr)) / SR
+    return np.interp(t_novo, t_orig, dados).astype(np.float32)
 
 
 def ler_wav(caminho: Path) -> np.ndarray:
@@ -120,25 +130,23 @@ def batida(trilha, ini, fim, bpm, padrao, rng):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--piper", required=True)
-    ap.add_argument("--voz", required=True)
+    ap.add_argument("--modelo", required=True)
+    ap.add_argument("--vozes", required=True)
+    ap.add_argument("--voz", default="pm_alex")
+    ap.add_argument("--velocidade", type=float, default=1.05)
     args = ap.parse_args()
 
     raiz = Path(__file__).resolve().parent.parent
     publico = raiz / "public"
     publico.mkdir(exist_ok=True)
 
+    from kokoro_onnx import Kokoro
+
+    kokoro = Kokoro(args.modelo, args.vozes)
     falas = []
-    with tempfile.TemporaryDirectory() as tmp:
-        for i, (cid, texto, _, _) in enumerate(CENAS):
-            saida = Path(tmp) / f"{i}.wav"
-            subprocess.run(
-                [args.piper, "-m", args.voz, "-f", str(saida), "--length_scale", "0.8", "--sentence_silence", "0.2"],
-                input=texto.encode(),
-                check=True,
-                capture_output=True,
-            )
-            falas.append(ler_wav(saida))
+    for cid, texto, _, _ in CENAS:
+        audio, sr = kokoro.create(texto, voice=args.voz, speed=args.velocidade, lang="pt-br")
+        falas.append(reamostrar(np.asarray(audio, dtype=np.float32), sr))
 
     cenas = []
     t = INICIO

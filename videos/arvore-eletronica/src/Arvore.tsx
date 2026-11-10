@@ -12,31 +12,29 @@ import {
   curvaRamo,
   pontoBezier,
 } from "./dados";
+import { Layout, useLayout } from "./layout";
 
 type Camera = { wx: number; wy: number; z: number; sx: number; sy: number };
 
-const FOCO_X = 600;
-const FOCO_Y = 450;
-
-const cameraDaCena = (id: string): Camera => {
-  if (id === "intro") return { wx: 960, wy: 600, z: 0.78, sx: 960, sy: 680 };
-  if (id === "outro") return { wx: 965, wy: 575, z: 0.84, sx: 960, sy: 440 };
+const cameraDaCena = (id: string, L: Layout): Camera => {
+  if (id === "intro") return L.camIntro;
+  if (id === "outro") return L.camFim;
   const g = GENEROS[id as IdGenero];
-  return { wx: g.x, wy: g.y, z: 1.45, sx: FOCO_X, sy: FOCO_Y };
+  return { wx: g.x, wy: g.y, z: L.zoomFoco, sx: L.focoX, sy: L.focoY };
 };
 
 const DURACAO_MOV = 1.1; // segundos de movimento de câmera
 
-export const useCamera = (t: number): Camera => {
+const calcularCamera = (t: number, L: Layout): Camera => {
   let i = CENAS.findIndex((c) => t >= c.inicio && t < c.fim);
   if (i < 0) i = CENAS.length - 1;
-  const atual = cameraDaCena(CENAS[i].id);
+  const atual = cameraDaCena(CENAS[i].id, L);
   if (i === 0) {
     // leve aproximação durante a intro
     const p = interpolate(t, [0, CENAS[0].fim], [0, 1], { extrapolateRight: "clamp" });
     return { ...atual, z: atual.z * (1 + 0.04 * p) };
   }
-  const anterior = cameraDaCena(CENAS[i - 1].id);
+  const anterior = cameraDaCena(CENAS[i - 1].id, L);
   const p = interpolate(t, [CENAS[i].inicio, CENAS[i].inicio + DURACAO_MOV], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -162,7 +160,8 @@ export const Arvore: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
   const t = frame / fps;
-  const cam = useCamera(t);
+  const L = useLayout();
+  const cam = calcularCamera(t, L);
   const ativo = generoAtivo(t);
   const final = t >= cenaPorId("outro").inicio;
   const corAtiva = ativo ? GENEROS[ativo].cor : GENEROS.disco.cor;
@@ -208,7 +207,7 @@ export const Arvore: React.FC = () => {
       {/* vinheta colorida pelo gênero ativo */}
       <AbsoluteFill
         style={{
-          background: `radial-gradient(ellipse at ${FOCO_X}px ${FOCO_Y}px, ${corAtiva}00 30%, ${COR.fundo}CC 100%)`,
+          background: `radial-gradient(ellipse at ${L.focoX}px ${L.focoY}px, ${corAtiva}00 30%, ${COR.fundo}CC 100%)`,
           pointerEvents: "none",
         }}
       />

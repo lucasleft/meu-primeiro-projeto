@@ -1,5 +1,5 @@
 {
-  "duracao": 53.938,
+  "duracao": 48.639,
   "cenas": [
     {
       "id": "intro",
@@ -7,79 +7,79 @@
       "bpm": 118,
       "padrao": "four",
       "falaInicio": 0.6,
-      "falaFim": 8.336,
+      "falaFim": 6.04,
       "inicio": 0,
-      "fim": 8.436
+      "fim": 6.14
     },
     {
       "id": "disco",
       "texto": "A raiz é a disco, nos anos setenta: o bumbo marca todos os tempos. É o famoso quatro por quatro.",
       "bpm": 118,
       "padrao": "four",
-      "falaInicio": 8.686,
-      "falaFim": 15.302,
-      "inicio": 8.436,
-      "fim": 15.402
+      "falaInicio": 6.39,
+      "falaFim": 12.043,
+      "inicio": 6.14,
+      "fim": 12.143
     },
     {
       "id": "house",
       "texto": "Em Chicago, nos anos oitenta, DJs recriam esse groove com máquinas. Nasce o house, a cento e vinte e quatro BPM.",
       "bpm": 124,
       "padrao": "four",
-      "falaInicio": 15.652,
-      "falaFim": 24.268,
-      "inicio": 15.402,
-      "fim": 24.368
+      "falaInicio": 12.393,
+      "falaFim": 19.583,
+      "inicio": 12.143,
+      "fim": 19.683
     },
     {
       "id": "techno",
-      "texto": "Em Detroit, o house fica frio e mecânico. É o techno: cru e hipnótico.",
+      "texto": "Em Detroit, o house fica frio e mecânico. É o techno: cru, repetitivo e hipnótico.",
       "bpm": 130,
       "padrao": "four",
-      "falaInicio": 24.618,
-      "falaFim": 30.05,
-      "inicio": 24.368,
-      "fim": 30.15
+      "falaInicio": 19.933,
+      "falaFim": 24.882,
+      "inicio": 19.683,
+      "fim": 24.982
     },
     {
       "id": "trance",
-      "texto": "Na Alemanha, o techno ganha melodias épicas. Surge o trance.",
+      "texto": "Na Alemanha dos anos noventa, o techno ganha melodias longas e épicas. Surge o trance.",
       "bpm": 138,
       "padrao": "four",
-      "falaInicio": 30.4,
-      "falaFim": 35.608,
-      "inicio": 30.15,
-      "fim": 35.708
+      "falaInicio": 25.232,
+      "falaFim": 30.373,
+      "inicio": 24.982,
+      "fim": 30.473
     },
     {
       "id": "dnb",
       "texto": "No Reino Unido, os breakbeats aceleram até cento e setenta e quatro BPM. É o drum and bass.",
       "bpm": 174,
       "padrao": "break",
-      "falaInicio": 35.958,
-      "falaFim": 41.534,
-      "inicio": 35.708,
-      "fim": 41.634
+      "falaInicio": 30.723,
+      "falaFim": 36.377,
+      "inicio": 30.473,
+      "fim": 36.477
     },
     {
       "id": "dubstep",
-      "texto": "Do UK garage nasce o dubstep: meio tempo e graves pesados.",
+      "texto": "Do UK garage, primo do house, nasce o dubstep: meio tempo e graves pesados.",
       "bpm": 140,
       "padrao": "half",
-      "falaInicio": 41.884,
-      "falaFim": 45.74,
-      "inicio": 41.634,
-      "fim": 45.84
+      "falaInicio": 36.727,
+      "falaFim": 41.185,
+      "inicio": 36.477,
+      "fim": 41.285
     },
     {
       "id": "outro",
       "texto": "Cada gênero é um galho da mesma raiz. Conhecer a árvore ajuda o DJ a montar sets com história.",
       "bpm": 124,
       "padrao": "four",
-      "falaInicio": 46.09,
-      "falaFim": 52.338,
-      "inicio": 45.84,
-      "fim": 53.938
+      "falaInicio": 41.535,
+      "falaFim": 47.039,
+      "inicio": 41.285,
+      "fim": 48.639
     }
   ]
 }

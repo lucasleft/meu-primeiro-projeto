@@ -1,12 +1,14 @@
 import React from "react";
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { CENAS, COR, FONTE_TEXTO, GENEROS, IdGenero } from "./dados";
+import { useLayout } from "./layout";
 
 // Legenda sincronizada: as palavras acendem conforme a narração avança.
 export const Legenda: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
+  const L = useLayout();
 
   const cena = CENAS.find((c) => t >= c.falaInicio - 0.2 && t < c.falaFim + 0.35);
   if (!cena) return null;
@@ -25,18 +27,18 @@ export const Legenda: React.FC = () => {
 
   let acumulado = 0;
   return (
-    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: 70, pointerEvents: "none" }}>
+    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: L.legenda.paddingBottom, pointerEvents: "none" }}>
       <div
         style={{
           opacity: opacidade,
-          maxWidth: 1560,
+          maxWidth: L.legenda.maxWidth,
           padding: "20px 36px",
           borderRadius: 18,
           background: "rgba(11,8,20,0.72)",
           borderLeft: `6px solid ${cor}`,
           fontFamily: FONTE_TEXTO,
           fontWeight: 500,
-          fontSize: 42,
+          fontSize: L.legenda.fontSize,
           lineHeight: 1.3,
           textAlign: "center",
           color: COR.textoSuave,

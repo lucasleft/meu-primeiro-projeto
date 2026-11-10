@@ -1,6 +1,7 @@
 import React from "react";
 import { AbsoluteFill, Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { COR, FONTE_TEXTO, FONTE_TITULO, Genero } from "./dados";
+import { useLayout } from "./layout";
 
 // Texto cinético: cada letra sobe girando, com atraso em cascata.
 export const LetrasCineticas: React.FC<{
@@ -40,6 +41,7 @@ export const Painel: React.FC<{ g: Genero; duracao: number }> = ({ g, duracao })
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
+  const L = useLayout();
 
   const saida = interpolate(frame, [duracao - 10, duracao], [0, 1], {
     extrapolateLeft: "clamp",
@@ -47,7 +49,7 @@ export const Painel: React.FC<{ g: Genero; duracao: number }> = ({ g, duracao })
     easing: Easing.in(Easing.cubic),
   });
 
-  const tamanhoNome = Math.min(118, 700 / (g.nome.length * 0.86));
+  const tamanhoNome = Math.min(L.painel.tamanhoMax, L.painel.larguraNome / (g.nome.length * 0.86));
   const linhaEntrada = interpolate(frame, [4, 20], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) });
 
   // contador de BPM
@@ -67,9 +69,9 @@ export const Painel: React.FC<{ g: Genero; duracao: number }> = ({ g, duracao })
       <div
         style={{
           position: "absolute",
-          left: 1110,
-          top: 170,
-          width: 730,
+          left: L.painel.left,
+          top: L.painel.top,
+          width: L.painel.width,
           opacity: 1 - saida,
           translate: `${saida * 80}px 0px`,
         }}
@@ -101,7 +103,7 @@ export const Painel: React.FC<{ g: Genero; duracao: number }> = ({ g, duracao })
 
         <div style={{ marginTop: 34, display: "flex", flexDirection: "column", gap: 18 }}>
           {g.tracos.map((tr, i) => (
-            <div key={tr} style={{ ...ent(26 + i * 7), display: "flex", alignItems: "center", gap: 20, fontFamily: FONTE_TEXTO, fontWeight: 500, fontSize: 40, color: COR.texto }}>
+            <div key={tr} style={{ ...ent(26 + i * 7), display: "flex", alignItems: "center", gap: 20, fontFamily: FONTE_TEXTO, fontWeight: 500, fontSize: L.painel.fonteTraco, color: COR.texto }}>
               <div style={{ width: 14, height: 14, rotate: "45deg", background: g.cor, flexShrink: 0 }} />
               {tr}
             </div>
