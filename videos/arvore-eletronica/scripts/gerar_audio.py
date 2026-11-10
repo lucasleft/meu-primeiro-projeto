@@ -1,11 +1,16 @@
-"""Gera a narração (Kokoro TTS, voz pt-BR), a trilha de batidas e o arquivo de tempos das cenas.
+"""Gera a narração, a trilha de batidas e o arquivo de tempos das cenas.
 
-Requer: pip install kokoro-onnx soundfile numpy
-Modelo: kokoro-v1.0.onnx e voices-v1.0.bin (releases de thewh1teagle/kokoro-onnx no GitHub)
+Dois motores de voz:
 
-Uso:
-  python3 scripts/gerar_audio.py --modelo kokoro-v1.0.onnx --vozes voices-v1.0.bin [--voz pm_alex]
-Vozes pt-BR: pm_alex, pm_santa (masculinas), pf_dora (feminina).
+1) OmniVoice (o modelo do VoiceStudio), clonando a voz de scripts/referencia-voz.wav  [padrão]
+   pip install torch torchaudio omnivoice soundfile numpy
+   python3 scripts/gerar_audio.py --motor omnivoice
+   Atenção: os pesos do OmniVoice têm licença CC-BY-NC (uso não comercial).
+
+2) Kokoro (voz pt-BR pronta)
+   pip install kokoro-onnx soundfile numpy
+   baixe kokoro-v1.0.onnx e voices-v1.0.bin (releases de thewh1teagle/kokoro-onnx)
+   python3 scripts/gerar_audio.py --motor kokoro --modelo kokoro-v1.0.onnx --vozes voices-v1.0.bin --voz pm_alex
 """
 
 import argparse
@@ -19,6 +24,9 @@ SR = 44100
 INICIO = 0.6  # silêncio antes da primeira fala (s)
 PAUSA = 0.35  # pausa entre falas (s)
 FINAL = 1.6  # respiro depois da última fala (s)
+
+# Transcrição de scripts/referencia-voz.wav (usada para clonar a voz no OmniVoice)
+REF_TEXTO = "A raiz é a disco, nos anos setenta: o bumbo marca todos os tempos. É o famoso quatro por quatro."
 
 # id, texto falado, BPM da batida de fundo, padrão rítmico
 CENAS = [
@@ -130,8 +138,9 @@ def batida(trilha, ini, fim, bpm, padrao, rng):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--modelo", required=True)
-    ap.add_argument("--vozes", required=True)
+    ap.add_argument("--motor", choices=["omnivoice", "kokoro"], default="omnivoice")
+    ap.add_argument("--modelo")
+    ap.add_argument("--vozes")
     ap.add_argument("--voz", default="pm_alex")
     ap.add_argument("--velocidade", type=float, default=1.05)
     args = ap.parse_args()
@@ -140,13 +149,26 @@ def main():
     publico = raiz / "public"
     publico.mkdir(exist_ok=True)
 
-    from kokoro_onnx import Kokoro
-
-    kokoro = Kokoro(args.modelo, args.vozes)
     falas = []
-    for cid, texto, _, _ in CENAS:
-        audio, sr = kokoro.create(texto, voice=args.voz, speed=args.velocidade, lang="pt-br")
-        falas.append(reamostrar(np.asarray(audio, dtype=np.float32), sr))
+    if args.motor == "kokoro":
+        from kokoro_onnx import Kokoro
+
+        kokoro = Kokoro(args.modelo, args.vozes)
+        for cid, texto, _, _ in CENAS:
+            audio, sr = kokoro.create(texto, voice=args.voz, speed=args.velocidade, lang="pt-br")
+            falas.append(reamostrar(np.asarray(audio, dtype=np.float32), sr))
+    else:
+        import torch
+        from omnivoice import OmniVoice
+
+        modelo = OmniVoice.from_pretrained("k2-fsa/OmniVoice", device_map="cpu", dtype=torch.float32)
+        ref = str(Path(__file__).resolve().parent / "referencia-voz.wav")
+        prompt = modelo.create_voice_clone_prompt(ref_audio=ref, ref_text=REF_TEXTO) if hasattr(modelo, "create_voice_clone_prompt") else None
+        for cid, texto, _, _ in CENAS:
+            extra = {"voice_clone_prompt": prompt} if prompt is not None else {"ref_audio": ref, "ref_text": REF_TEXTO}
+            audio = modelo.generate(text=texto, language="pt", speed=args.velocidade, **extra)[0]
+            falas.append(reamostrar(np.asarray(audio, dtype=np.float32), 24000))
+            print(f"  voz pronta: {cid}", flush=True)
 
     cenas = []
     t = INICIO
